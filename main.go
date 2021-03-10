@@ -25,6 +25,7 @@ const fileUrl = "http://idea.medeming.com/jets/images/jihuoma.zip"
 var NotFoundError = errors.New("未找到激活码")
 
 func main() {
+	defer pause()
 	defer func() {
 		if err := recover(); err != nil {
 			log.Fatal(err)
@@ -149,4 +150,9 @@ func check(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func pause() {
+	fmt.Print("Press Enter or Ctrl-C to exit...")
+	bufio.NewScanner(os.Stdin).Scan()
 }
