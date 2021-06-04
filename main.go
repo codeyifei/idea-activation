@@ -7,20 +7,23 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/atotto/clipboard"
-	"github.com/fatih/color"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/transform"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
+
+	"github.com/atotto/clipboard"
+	"github.com/fatih/color"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 // 激活链接
-const fileUrl = "http://idea.medeming.com/jets/images/jihuoma.zip"
+// const fileUrl = "http://idea.medeming.com/jets/images/jihuoma.zip"
+const fileUrl = "http://idea.medeming.com/a/jihuoma1.zip"
 
 var NotFoundError = errors.New("未找到激活码")
 
@@ -32,10 +35,16 @@ func main() {
 		}
 	}()
 
-	var useOldVersion, isShow bool
+	var useOldVersion, isShow, url bool
 	flag.BoolVar(&useOldVersion, "old", false, "是否使用旧版本激活码")
 	flag.BoolVar(&isShow, "show", false, "是否显示激活码")
+	flag.BoolVar(&url, "url", false, "是否显示激活链接")
 	flag.Parse()
+
+	if url {
+		color.Green("激活文件链接为：%s", fileUrl)
+		return
+	}
 
 	buffer := bytes.NewBuffer([]byte{})
 	buffer.WriteString(os.TempDir())
@@ -153,6 +162,8 @@ func check(err error) {
 }
 
 func pause() {
-	fmt.Print("Press Enter or Ctrl-C to exit...")
-	bufio.NewScanner(os.Stdin).Scan()
+	if runtime.GOOS == "windows" {
+		fmt.Print("Press Enter or Ctrl-C to exit...")
+		bufio.NewScanner(os.Stdin).Scan()
+	}
 }
