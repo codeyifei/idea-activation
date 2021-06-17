@@ -35,10 +35,11 @@ func main() {
 		}
 	}()
 
-	var useOldVersion, isShow, url bool
+	var useOldVersion, isShow, url, noCopy bool
 	flag.BoolVar(&useOldVersion, "old", false, "是否使用旧版本激活码")
 	flag.BoolVar(&isShow, "show", false, "是否显示激活码")
 	flag.BoolVar(&url, "url", false, "是否显示激活链接")
+	flag.BoolVar(&noCopy, "no-copy", false, "不复制到剪切板")
 	flag.Parse()
 
 	if url {
@@ -55,13 +56,21 @@ func main() {
 
 	code, err := readCode(filename, useOldVersion)
 	check(err)
-	check(clipboard.WriteAll(string(code)))
-	if useOldVersion {
-		color.Green("✓ 旧版激活码已复制到剪切板")
+	if !noCopy {
+		check(clipboard.WriteAll(string(code)))
+		if useOldVersion {
+			color.Green("✓ 旧版激活码已复制到剪切板")
+		} else {
+			color.Green("✓ 激活码已复制到剪切板")
+		}
 	} else {
-		color.Green("✓ 激活码已复制到剪切板")
+		if useOldVersion {
+			color.Green("✓ 旧版激活码已生成")
+		} else {
+			color.Green("✓ 激活码已生成")
+		}
 	}
-	if isShow {
+	if isShow || noCopy {
 		fmt.Println(string(code))
 	}
 }
